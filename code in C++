@@ -1,0 +1,212 @@
+#include <iostream>
+
+#include <stdlib.h>
+
+#include <ctime>
+
+#include <cmath>
+
+using namespace std;
+
+int get_result(int u, int v, int q ,int s) //calculate u and v
+{
+	int res=(v-s*u) % q;
+	if(res<0) //judge mod operation , there are differences between C/C++ 、Java 、 Python about negative numbers mod. 
+	{
+		res=q-abs(res);
+	}
+	if (res>q/2)
+	{
+		return 1;
+	}
+	else{
+		return 0;
+	}
+
+}
+
+int* get_uv(int A[],int B[],int message,int q,int nvals) //return u and v
+{
+	int * M = new int[2];//store u and v
+	int sample[nvals/4];
+	int rangeNvals_1[nvals-1]; // range nvals-1  belongs [0,19);
+	int u=0,v=0;
+	for(int i=0;i<nvals-1;i++)
+
+	{
+
+		rangeNvals_1[i]=i;
+
+	}
+	for(int i=0;i<nvals/4;i++)
+
+	{
+
+		sample[i]= rand()%(nvals-1);  //sample belongs [0,nvals-1)
+
+	}
+
+	printf("\nSampling :");
+
+	for(int i=0;i<nvals/4;i++)//index 
+
+	{
+
+		cout<<sample[i]<<"\t";
+
+	}
+
+
+	for(int i=0;i<nvals/4;i++)
+
+	{
+		u=u+(A[sample[i]]);
+
+		v=v+B[sample[i]];
+
+	}
+
+	v=v+floor(q/2)*message;
+
+	
+
+	v = v%q;
+
+	u = u%q;
+
+
+	printf("\nu:\t\t%d",u);
+
+	printf("\nv:\t\t%d",v);
+	
+	M[0] = u;
+	M[1] = v;
+
+	return M ;
+	
+	
+}
+
+int main( ) {
+
+	int nvals = 20;
+
+	int B[nvals];
+	
+	int q = 97; //prime value;
+	
+	int A[nvals];
+
+	int e[nvals]; //errors
+
+	int s=20;//secret value;
+
+	int message = 7;//the message you want to encryp; between [0,15],4 bit.
+	
+	printf("\n------Parameters and keys-------\n");
+
+	printf("\nValue to cipher in decimal:\t%d\n",message);
+
+	int i=0;
+	//make message(decimal) to binary
+	int binaryMessage[4] = {0};//4 bit 
+	while(message > 0)
+	{
+		binaryMessage[i] = message%2;
+		i++;
+		message = message/2;
+	}
+	//bit0=binaryMessage[3];bit1 =binaryMessage[3];bit2 = binaryMessage[3];bit3 =binaryMessage[3]
+	cout<<"\nValue in binary :";
+	for(i=3;i>=0;i--)
+	{
+		printf("%d",binaryMessage[i]); 
+	}
+	srand((unsigned)time(NULL));	
+
+	int rangeQ[q];
+
+	for(int i=0;i<q;i++)
+	{
+
+		rangeQ[i]=i;
+
+	}
+
+	for(int i=0;i<nvals;i++)
+	{
+
+		A[i]= rand()%(q);//generate nvals number random values; len(A)=20;
+
+	}
+
+	for(int x=0;x<nvals;x++)//x belong [0,20)
+
+	{
+
+		e[x]=rand()%(4-1+1)+1; //random e[x] belongs [1,4] .
+
+		B[x]=(A[x]*s+e[x])%q;
+
+	}
+
+	cout<<"\n\nPublic Key (A):";
+
+	for(int i=0;i<nvals;i++)
+
+	{
+
+		cout<<A[i]<<"\t";
+
+	}
+
+	cout<<"\n\nPublic Key (B):";
+
+	for(int i=0;i<nvals;i++)
+
+	{
+
+		cout<<B[i]<<"\t";
+
+	}
+
+	cout<<"\n\nErrors (e):\t";
+
+	for(int i=0;i<nvals;i++)
+
+	{
+
+		cout<<e[i]<<"\t";
+
+	}
+
+	printf("\n\nSecret key:\t\t%d\n",s);
+
+	printf("\n\nPrime number:\t\t%d\n",q);
+
+	printf("\n\n\n-----------Sampling Process and Calculation of u and v -------------------\n");
+
+	int resultBit[4];
+	for(int i=0;i<4;i++)
+	{
+		int temp = binaryMessage[i];
+		cout<<endl;
+		int *M = get_uv(A,B,temp,q,nvals);
+		int u = M[0];
+		int v = M[1];
+		int result = get_result(u,v,q,s);
+		resultBit[i]=result;
+		
+	}
+	printf("\n\n---------------Result----------------------\n");
+	for(int j=0;j<4;j++)
+	{
+		printf("Result bit%d is %d\n",j,resultBit[j]);
+		
+	}
+
+	return 0;
+
+}
+
+
