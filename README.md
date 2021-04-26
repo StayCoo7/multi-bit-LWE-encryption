@@ -1,1 +1,1 @@
-# multi-bit-LWE-encryption
+Learning With Errors (LWE) is a quantum robust method of cryptography. Initially we create a secret value (s) and which is our private key. We then create a public key which is based on random numbers (A), and then generate another set of numbers (B) which is based on A,s and random errors e. In this case we will show how a 4-bit value can be encrypted. In this case we will convert an integer to a 4-bit value, and then cipher each of the bits. This is achieved by generating a public key, and then sampling the public key for each of the bits.
